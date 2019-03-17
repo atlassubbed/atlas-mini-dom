@@ -23,10 +23,10 @@ const App = ({data}) => {
 }
 
 // mount app
-const mountedApp = diff(<App firstName={"Atlas"} lastName={"Subbed"}/>)
+const mountedApp = diff(<App firstName="Atlas" lastName="Subbed"/>)
 
 // update app with new props
-diff(<App firstName={"jai"}/>, mountedApp)
+diff(<App firstName="jai"/>, mountedApp)
 
 ```
 <sup>[1] with an appropriate [JSX pragma](https://github.com/atlassubbed/atlas-relax-jsx-pragmas).</sup>
