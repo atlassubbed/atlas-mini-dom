@@ -2,7 +2,7 @@
 
 Super simple DOM Renderer plugin for Relax.
 
-[![Travis](https://img.shields.io/travis/[username]/[repo].svg)](https://travis-ci.org/[username]/[repo])
+[![Travis](https://img.shields.io/travis/atlassubbed/atlas-mini-dom.svg)](https://travis-ci.org/atlassubbed/atlas-mini-dom)
 
 ---
 
