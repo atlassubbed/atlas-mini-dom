@@ -53,7 +53,7 @@ It doesn't support:
 
   1. Style object support
   2. Make sure element focus (e.g. button, input, ...) is handled properly.
-    * Default focus
-    * Keeping focus
-    * Refocusing
+     * Default focus
+     * Keeping focus
+     * Refocusing
   3. DOM recycling
