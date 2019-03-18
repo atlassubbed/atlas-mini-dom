@@ -4,7 +4,8 @@ Super simple DOM Renderer plugin for Relax.
 
 [![Travis](https://img.shields.io/travis/atlassubbed/atlas-mini-dom.svg)](https://travis-ci.org/atlassubbed/atlas-mini-dom)
 
----
+[<img alt="Little tree boi" align="right" width="200" src="https://user-images.githubusercontent.com/38592371/54507116-3ba09a80-4916-11e9-96c1-ba497f8ac8bb.png">](https://www.google.com/search?q=worlds+smallest+tree)
+
 
 ### why you need a DOM-Renderer plugin
 
