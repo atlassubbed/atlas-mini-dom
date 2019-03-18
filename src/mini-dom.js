@@ -1,7 +1,11 @@
 const isFn = f => typeof f === "function";
 
+// all props on custom elements are data attributes, prob change this
 const attrName = (k, isHTML) => `${isHTML ? "" : "data-"}${k}`
 
+// relax mutation events are designed for LCRS trees
+// where natural insertion happens *after* a node
+// since the dom allows insertion *before* a node, we need this helper
 const insertAfter = (domNode, parNode, prevNode) => {
   parNode.insertBefore(
     domNode, 
@@ -11,6 +15,7 @@ const insertAfter = (domNode, parNode, prevNode) => {
   )
 }
 
+// essentially "diff" props
 const applyProps = (domNode, props, prevProps, isHTML) => {
   if (!prevProps) for (let k in props)
     domNode.setAttribute(attrName(k, isHTML), props[k])
@@ -26,12 +31,13 @@ const applyProps = (domNode, props, prevProps, isHTML) => {
 
 const makeNode = (name, props) => name ?
   document.createElement(name) :
-  document.createTextNode(props);
+  document.createTextNode(props); // no name, is a text node
 
 module.exports = class DOMRenderer {
   constructor(domRoot){
     this.domRoot = domRoot;
   }
+  // adding new node to dom
   add(node, parent, prevSib, {name, data}){
     const isHost = !isFn(name);
     name = isHost ? name : name.name
@@ -45,11 +51,13 @@ module.exports = class DOMRenderer {
       prevSib && prevSib._domNode
     );
   }
+  // removing node from dom
   remove(node, parent, prevSib){
     const domNode = node._domNode;
     domNode.parentNode.removeChild(domNode);
     node._domNode = null;
   }
+  // moving node in dom
   move(node, parent, prevSib, nextSib){
     insertAfter(
       node._domNode,
@@ -57,6 +65,7 @@ module.exports = class DOMRenderer {
       nextSib && nextSib._domNode
     );
   }
+  // receiving new props (data) on existing node
   temp(node, {name, data}, prevTemp){
     const isHost = !isFn(name);
     const domNode = node._domNode
@@ -66,6 +75,7 @@ module.exports = class DOMRenderer {
       prevTemp.data,
       isHost
     );
+    // no name, is a text node
     if (domNode.nodeValue !== data) 
       domNode.nodeValue = data;
   }
