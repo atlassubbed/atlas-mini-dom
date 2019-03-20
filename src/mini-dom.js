@@ -1,7 +1,5 @@
 const isFn = f => typeof f === "function";
-
-// all props on custom elements are data attributes, prob change this
-const attrName = (k, isHTML) => `${isHTML ? "" : "data-"}${k}`
+const empty = {};
 
 // relax mutation events are designed for LCRS trees
 // where natural insertion happens *after* a node
@@ -16,22 +14,23 @@ const insertAfter = (domNode, parNode, prevNode) => {
 }
 
 // essentially "diff" props
-const applyProps = (domNode, props, prevProps, isHTML) => {
-  if (!prevProps) for (let k in props)
-    domNode.setAttribute(attrName(k, isHTML), props[k])
-  else {
-    for (let k in props)
-      if (prevProps[k] !== props[k]) 
-        domNode.setAttribute(attrName(k, isHTML), props[k])
-    for (let k in prevProps)
-      if (!(k in props)) 
-        domNode.removeAttribute(attrName(k, isHTML))
+const applyProps = (domNode, next, prev, isIrreducible) => {
+  // remove stale prev props
+  for (let k in prev) if (!(k in next)){
+    if (k[0] === "o" && k[1] === "n")
+      domNode.removeEventListener(k.substr(2).toLowerCase(), prev[k]);
+    else domNode.removeAttribute(`${isIrreducible ? "" : "data-"}${k}`)
+  }
+  // (re)set next props
+  for (let k in next) if (prev[k] !== next[k]){
+    if (k[0] === "o" && k[1] === "n"){
+      const type = k.substr(2).toLowerCase();
+      // XXX maybe optimize by using a wrapper and switching out the handler?
+      if (prev[k]) domNode.removeEventListener(type, prev[k]);
+      domNode.addEventListener(type, next[k])
+    } else domNode.setAttribute(`${isIrreducible ? "" : "data-"}${k}`, next[k])
   }
 }
-
-const makeNode = (name, props) => name ?
-  document.createElement(name) :
-  document.createTextNode(props); // no name, is a text node
 
 module.exports = class DOMRenderer {
   constructor(domRoot){
@@ -39,10 +38,12 @@ module.exports = class DOMRenderer {
   }
   // adding new node to dom
   add(node, parent, prevSib, {name, data}){
-    const isHost = !isFn(name);
-    name = isHost ? name : name.name
-    const domNode = node._domNode = makeNode(name, data);
-    name && applyProps(domNode, data, {}, isHost);
+    const isIrreducible = !isFn(name);
+    name = isIrreducible ? name : name.name
+    const domNode = node._domNode = name ?
+      document.createElement(name) :
+      document.createTextNode(data);
+    name && applyProps(domNode, data || empty, empty, isIrreducible);
     if (!parent)
       this.domRoot.appendChild(domNode);
     else insertAfter(
@@ -67,13 +68,13 @@ module.exports = class DOMRenderer {
   }
   // receiving new props (data) on existing node
   temp(node, {name, data}, prevTemp){
-    const isHost = !isFn(name);
+    const isIrreducible = !isFn(name);
     const domNode = node._domNode
     if (name) return applyProps(
       domNode,
-      data,
-      prevTemp.data,
-      isHost
+      data || empty,
+      prevTemp.data || empty,
+      isIrreducible
     );
     // no name, is a text node
     if (domNode.nodeValue !== data) 

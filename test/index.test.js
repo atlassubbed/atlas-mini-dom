@@ -76,8 +76,12 @@ describe("renderer", function(){
       diff(temp, null, this.renderer);
       expect(getHTML()).to.equal(`<custom data-id="h"><custom data-id="w"></custom></custom>`)
     })
-    it.skip("should apply event listener attributes to irreducible nodes", function(){
-
+    it("should apply event listener attributes to nodes", function(){
+      let clicked = 0;
+      const temp = div({onclick: () => clicked++});
+      diff(temp, null, this.renderer);
+      getRoot().firstChild.click();
+      expect(clicked).to.equal(1)
     })
   })
   describe("unmounting", function(){
@@ -268,11 +272,27 @@ describe("renderer", function(){
       diff(C({id: "h", class: "green"}), app)
       expect(getHTML()).to.equal(`<custom data-id="h" data-class="green"></custom>`)
     })
-    it.skip("should remove old event listeners on irreducible nodes", function(){
-
+    it("should remove old event listeners from nodes", function(){
+      let clicked = 0;
+      const temp = div({onclick: () => clicked++});
+      diff(div(), diff(temp, null, this.renderer))
+      getRoot().firstChild.click();
+      expect(clicked).to.equal(0)
     })
-    it.skip("should add new event listeners on irreducible nodes", function(){
-
+    it("should add new event listeners to nodes", function(){
+      let clicked = 0;
+      diff(div({onclick: () => clicked++}), diff(div(), null, this.renderer))
+      getRoot().firstChild.click();
+      expect(clicked).to.equal(1)
+    })
+    it("should update event listeners on nodes", function(){
+      let clickedOld = 0, clickedNew = 0;
+      const temp = div({onclick: () => clickedOld++});
+      const newTemp = div({onclick: () => clickedNew++})
+      diff(newTemp, diff(temp, null, this.renderer))
+      getRoot().firstChild.click();
+      expect(clickedOld).to.equal(0)
+      expect(clickedNew).to.equal(1)
     })
   })
 })
