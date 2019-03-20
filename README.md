@@ -45,6 +45,15 @@ In addition to supporting all of the non-special nodes and attributes, it suppor
 
 It doesn't support:
 
-  * strange things like `dangerouslySetInnerHTML`
-  * "className" (just use "class" attribute)
-  * special treatment for SVG/canvas elements
+  * `dangerouslySetInnerHTML`
+  * `className` (just use `class` attribute)
+  * Special treatment for SVG/canvas elements
+
+### todo
+
+  1. Style object support
+  2. Make sure element focus (e.g. button, input, ...) is handled properly.
+     * Default focus
+     * Keeping focus
+     * Refocusing
+  3. DOM recycling

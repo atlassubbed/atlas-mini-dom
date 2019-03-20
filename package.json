@@ -43,5 +43,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/atlassubbed/atlas-mini-dom.git"
+  },
+  "dependencies": {
+    "jsdom": "^14.0.0",
+    "jsdom-global": "^3.0.2"
   }
 }
