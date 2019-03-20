@@ -8,6 +8,10 @@ Super simple DOM Renderer plugin for Relax.
 
 ### simple usage
 
+```
+npm install --save atlas-mini-dom
+```
+
 ```jsx
 const { diff } = require("atlas-relax");
 const DOMRenderer = require("atlas-mini-dom");
