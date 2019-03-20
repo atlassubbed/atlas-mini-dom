@@ -58,7 +58,7 @@ diff(<App firstName="jai"/>, mountedApp)
 ```
 <sup>[1] with an appropriate [JSX pragma](https://github.com/atlassubbed/atlas-relax-jsx-pragmas).</sup>
 
-Alone, this just creates an in-memory graph and updates it. It doesn't render anything to the DOM. Plugins are little listeners that can react to changes in the graph (remember, your <App/> describes a graph), and do stuff as a result. In this case, "stuff" means "rendering to the DOM".
+Alone, this just creates an in-memory graph and updates it. It doesn't render anything to the DOM. Plugins are little listeners that can react to changes in the graph (remember, `<App/>` describes a graph), and do stuff as a result. In this case, "stuff" means "rendering to the DOM".
 
 ### atlas-mini-dom is intentionally simple
 
