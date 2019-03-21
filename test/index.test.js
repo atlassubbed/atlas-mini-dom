@@ -49,6 +49,11 @@ describe("renderer", function(){
       diff(temp, null, this.renderer);
       expect(getHTML()).to.equal("<custom><custom></custom><custom></custom></custom>")
     })
+    it("should use a fallback name for reducible nodes without a name", function(){
+      const temp = {name: (() => () => {})()};
+      diff(temp, null, this.renderer);
+      expect(getHTML()).to.equal("<r-el></r-el>")
+    })
     it("should mount root text nodes", function(){
       const temp = "hello world!";
       diff(temp, null, this.renderer);

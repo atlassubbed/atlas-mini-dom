@@ -39,7 +39,7 @@ module.exports = class DOMRenderer {
   // adding new node to dom
   add(node, parent, prevSib, {name, data}){
     const isIrreducible = !isFn(name);
-    name = isIrreducible ? name : name.name
+    name = isIrreducible ? name : name.name || "r-el"
     const domNode = node._domNode = name ?
       document.createElement(name) :
       document.createTextNode(data);
