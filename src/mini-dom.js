@@ -15,13 +15,12 @@ const insertAfter = (domNode, parNode, prevNode) => {
 
 const isEvt = name => name[0] === "o" && name[1] === "n";
 const evt = name => name.substr(2).toLowerCase();
-const attr = (name, isIrreducible) => `${isIrreducible ? "" : "data-"}${name}`;
 // essentially "diff" props
-const applyProps = (domNode, next, prev, isIrreducible) => {
+const applyProps = (domNode, next, prev) => {
   // remove stale prev props
   for (let k in prev) if (!(k in next)){
     if (isEvt(k)) domNode.removeEventListener(evt(k), prev[k]);
-    else domNode.removeAttribute(attr(k, isIrreducible));
+    else domNode.removeAttribute(k);
   }
   // (re)set next props
   for (let k in next) {
@@ -30,11 +29,10 @@ const applyProps = (domNode, next, prev, isIrreducible) => {
       const type = evt(k);
       if (!isFn(nv) || pv !== nv) domNode.removeEventListener(type, pv);
       if (nv) domNode.addEventListener(type, nv);
-    } else if (nv == null || nv === false){
-      domNode.removeAttribute(attr(k, isIrreducible));
-    } else if (pv !== nv){
-      domNode.setAttribute(attr(k, isIrreducible), nv);
-    }
+    } 
+    else if (k in domNode) domNode[k] = nv == null ? "" : nv;
+    else if (nv == null || nv === false) domNode.removeAttribute(k);
+    else if (pv !== nv) domNode.setAttribute(k, nv);
   }
 }
 
@@ -44,46 +42,30 @@ module.exports = class DOMRenderer {
   }
   // adding new node to dom
   add(node, parent, prevSib, {name, data}){
-    const isIrreducible = !isFn(name);
-    name = isIrreducible ? name : name.name || "r-el"
+    name = isFn(name) ? name.name || "r-el" : name;
     const domNode = node._domNode = name ?
       document.createElement(name) :
       document.createTextNode(data);
-    name && applyProps(domNode, data || empty, empty, isIrreducible);
-    if (!parent)
-      this.domRoot.appendChild(domNode);
-    else insertAfter(
-      domNode,
-      parent._domNode,
-      prevSib && prevSib._domNode
-    );
+    name && applyProps(domNode, data || empty, empty);
+    if (!parent) this.domRoot.appendChild(domNode);
+    else insertAfter(domNode, parent._domNode, prevSib && prevSib._domNode);
   }
   // removing node from dom
   remove(node, parent, prevSib){
-    const domNode = node._domNode;
-    domNode.parentNode.removeChild(domNode);
+    node._domNode.parentNode.removeChild(node._domNode);
     node._domNode = null;
   }
   // moving node in dom
   move(node, parent, prevSib, nextSib){
-    insertAfter(
-      node._domNode,
-      parent._domNode,
-      nextSib && nextSib._domNode
-    );
+    insertAfter(node._domNode, parent._domNode, nextSib && nextSib._domNode);
   }
   // receiving new props (data) on existing node
   temp(node, {name, data}, prevTemp){
-    const isIrreducible = !isFn(name);
     const domNode = node._domNode
-    if (name) return applyProps(
-      domNode,
-      data || empty,
-      prevTemp.data || empty,
-      isIrreducible
-    );
+    if (name) 
+      applyProps(domNode, data || empty, prevTemp.data || empty);
     // no name, is a text node
-    if (domNode.nodeValue !== data) 
+    else if (domNode.nodeValue !== data) 
       domNode.nodeValue = data;
   }
 }

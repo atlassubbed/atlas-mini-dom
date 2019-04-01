@@ -79,7 +79,7 @@ describe("renderer", function(){
     it("should apply data attributes to custom elements", function(){
       const temp = C({id: "h"}, C({id: "w"}));
       diff(temp, null, this.renderer);
-      expect(getHTML()).to.equal(`<custom data-id="h"><custom data-id="w"></custom></custom>`)
+      expect(getHTML()).to.equal(`<custom id="h"><custom id="w"></custom></custom>`)
     })
     it("should apply event listener attributes to nodes", function(){
       let clicked = 0;
@@ -277,9 +277,9 @@ describe("renderer", function(){
     it("should remove stale data attributes on reducible nodes", function(){
       const temp = C({id: "h", class:"green"});
       const app = diff(temp, null, this.renderer);
-      expect(getHTML()).to.equal(`<custom data-id="h" data-class="green"></custom>`)
+      expect(getHTML()).to.equal(`<custom id="h" class="green"></custom>`)
       diff(C({id: "h"}), app)
-      expect(getHTML()).to.equal(`<custom data-id="h"></custom>`)
+      expect(getHTML()).to.equal(`<custom id="h"></custom>`)
     })
     it("should add new attributes on irreducible nodes", function(){
       const temp = div({id: "h"});
@@ -291,9 +291,9 @@ describe("renderer", function(){
     it("should add new attributes on reducible nodes", function(){
       const temp = C({id: "h"});
       const app = diff(temp, null, this.renderer);
-      expect(getHTML()).to.equal(`<custom data-id="h"></custom>`)
+      expect(getHTML()).to.equal(`<custom id="h"></custom>`)
       diff(C({id: "h", class: "green"}), app)
-      expect(getHTML()).to.equal(`<custom data-id="h" data-class="green"></custom>`)
+      expect(getHTML()).to.equal(`<custom id="h" class="green"></custom>`)
     })
     it("should remove old event listeners from nodes", function(){
       let clicked = 0;
