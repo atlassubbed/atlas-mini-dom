@@ -13,22 +13,28 @@ const insertAfter = (domNode, parNode, prevNode) => {
   )
 }
 
+const isEvt = name => name[0] === "o" && name[1] === "n";
+const evt = name => name.substr(2).toLowerCase();
+const attr = (name, isIrreducible) => `${isIrreducible ? "" : "data-"}${name}`;
 // essentially "diff" props
 const applyProps = (domNode, next, prev, isIrreducible) => {
   // remove stale prev props
   for (let k in prev) if (!(k in next)){
-    if (k[0] === "o" && k[1] === "n")
-      domNode.removeEventListener(k.substr(2).toLowerCase(), prev[k]);
-    else domNode.removeAttribute(`${isIrreducible ? "" : "data-"}${k}`)
+    if (isEvt(k)) domNode.removeEventListener(evt(k), prev[k]);
+    else domNode.removeAttribute(attr(k, isIrreducible));
   }
   // (re)set next props
-  for (let k in next) if (prev[k] !== next[k]){
-    if (k[0] === "o" && k[1] === "n"){
-      const type = k.substr(2).toLowerCase();
-      // XXX maybe optimize by using a wrapper and switching out the handler?
-      if (prev[k]) domNode.removeEventListener(type, prev[k]);
-      domNode.addEventListener(type, next[k])
-    } else domNode.setAttribute(`${isIrreducible ? "" : "data-"}${k}`, next[k])
+  for (let k in next) {
+    const pv = prev[k], nv = next[k];
+    if (isEvt(k)){
+      const type = evt(k);
+      if (!isFn(nv) || pv !== nv) domNode.removeEventListener(type, pv);
+      if (nv) domNode.addEventListener(type, nv);
+    } else if (nv == null || nv === false){
+      domNode.removeAttribute(attr(k, isIrreducible));
+    } else if (pv !== nv){
+      domNode.setAttribute(attr(k, isIrreducible), nv);
+    }
   }
 }
 

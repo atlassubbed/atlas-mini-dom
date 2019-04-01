@@ -255,6 +255,24 @@ describe("renderer", function(){
       expect(getHTML()).to.equal(`<div id="h" class="green"></div>`)
       diff(div({id: "h"}), app)
       expect(getHTML()).to.equal(`<div id="h"></div>`)
+    });
+    [undefined, null, false].forEach(disabled => {
+      it(`should remove attributes which are changed to "${disabled}"`, function(){
+        const temp = div({id: "h", disabled: true});
+        const app = diff(temp, null, this.renderer);
+        expect(getHTML()).to.equal(`<div id="h" disabled="true"></div>`)
+        diff(div({id: "h", disabled}), app)
+        expect(getHTML()).to.equal(`<div id="h"></div>`)  
+      })
+    });
+    [undefined, false, null, "", 0, {}, ["an array"]].forEach(onClick => {
+      it(`should remove event listnerers which are changed to "${onClick}"`, function(){
+        let clicked = 0;
+        const temp = div({onClick: () => clicked++});
+        diff(div({onClick}), diff(temp, null, this.renderer))
+        getRoot().firstChild.click();
+        expect(clicked).to.equal(0)
+      })
     })
     it("should remove stale data attributes on reducible nodes", function(){
       const temp = C({id: "h", class:"green"});
