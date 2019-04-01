@@ -1,6 +1,6 @@
 {
   "name": "atlas-mini-dom",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Super simple DOM Renderer plugin for Relax.",
   "scripts": {
     "test-server": "mocha --colors --watch --recursive './test/**/*.test.js'",
